@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "quick_hotkeys",
+  "version": "${version}",
+  "name": "quick_hotkeys",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/glitchifyed/quick_hotkeys"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/quick_hotkeys/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
