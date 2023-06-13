@@ -2,13 +2,16 @@
   "schemaVersion": 1,
   "id": "quick_hotkeys",
   "version": "${version}",
-  "name": "quick_hotkeys",
-  "description": "",
-  "authors": [],
+  "name": "Quick Hotkeys",
+  "description": "Adds useful QOL hotkeys, such as an elytra swap hotkey and quick totem equip hotkey.",
+  "authors": ["glitchifyed"],
   "contact": {
-    "repo": "https://github.com/glitchifyed/quick_hotkeys"
+    "repo": "https://github.com/glitchifyed/quick_hotkeys",
+    "homepage": "https://modrinth.com/mod/quick_hotkeys",
+    "sources": "https://github.com/glitchifyed/quick_hotkeys",
+    "issues": "https://github.com/glitchifyed/quick_hotkeys/issues"
   },
-  "license": "All-Rights-Reserved",
+  "license": "LGPL-3.0",
   "icon": "assets/quick_hotkeys/icon.png",
   "environment": "client",
   "entrypoints": {
@@ -19,6 +22,7 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "minecraft": "~1.20",
+    "java": ">=17"
   }
 }
