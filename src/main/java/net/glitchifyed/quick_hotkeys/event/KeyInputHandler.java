@@ -11,12 +11,15 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Hand;
+import net.minecraft.util.UseAction;
 import net.minecraft.util.collection.DefaultedList;
 import org.lwjgl.glfw.GLFW;
 
@@ -76,7 +79,6 @@ public class KeyInputHandler {
         int firstSlot = ARMOUR_SLOT;
 
         int swapSlot = -1;
-        boolean swapIsElytra = false;
 
         int priorityDurability = -1;
         int priorityEnchants = -1;
@@ -88,6 +90,8 @@ public class KeyInputHandler {
         boolean wearingNothing = chestplateSlot.getItem() == Items.AIR;
         boolean wearingElytra = !wearingNothing && isItemElytra(chestplateSlot);
         boolean wearingChestplate = !wearingElytra;
+
+        boolean swapIsElytra = !wearingElytra;
 
         ItemStack offhandSlot = QuickHotkeysClient.CLIENT.player.getOffHandStack();
         if (doesItemGoInChestplateSlot(offhandSlot) && (wearingNothing || wearingChestplate && isItemElytra(offhandSlot) || wearingElytra)) {
@@ -108,19 +112,13 @@ public class KeyInputHandler {
 
                 boolean isElytra = isItemElytra(itemStack);
                 if (wearingNothing || wearingElytra && !isElytra || wearingChestplate) {
-                    if (isElytra) {
-                        if (!swapIsElytra) {
-                            swapIsElytra = true;
-                            priorityDurability = -1;
-                            priorityEnchants = -1;
-                        }
-
-                        int enchants = getEnchantCountOfItemStack(itemStack);
-                        if (enchants <= priorityEnchants) {
+                    if (!wearingElytra) {
+                        int durability = (int)((float)(itemStack.getMaxDamage() - itemStack.getDamage()) * (getEnchantCountOfItemStack(itemStack) * 0.5f + 1));
+                        if (durability <= priorityDurability) {
                             continue;
                         }
 
-                        priorityEnchants = enchants;
+                        priorityDurability = durability;
                         swapSlot = inventory.indexOf(itemStack);
 
                         continue;
@@ -130,7 +128,6 @@ public class KeyInputHandler {
                     if (durability > priorityDurability) {
                         priorityDurability = durability;
                         priorityEnchants = -1;
-                        swapIsElytra = false;
                     }
 
                     if (durability < priorityDurability) {
@@ -144,7 +141,6 @@ public class KeyInputHandler {
 
                     priorityEnchants = enchants;
                     swapSlot = inventory.indexOf(itemStack);
-                    swapIsElytra = isElytra;
                 }
             }
         }
@@ -197,6 +193,7 @@ public class KeyInputHandler {
             }
 
             swapSlot = inventory.indexOf(itemStack);
+
             break;
         }
 
