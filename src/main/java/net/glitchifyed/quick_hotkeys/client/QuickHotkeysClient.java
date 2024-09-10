@@ -24,7 +24,7 @@ public class QuickHotkeysClient implements ClientModInitializer {
         KeyInputHandler.initialiseKeyInputHandler();
         LOGGER.info("Registered keybinds");
 
-        LOGGER.info("Quick hotkeys fully loaded");
+        LOGGER.info("Quick hotkeys has been fully loaded!");
     }
 
     public static void PlaySound(SoundEvent soundEvent, float pitch, float volume) {

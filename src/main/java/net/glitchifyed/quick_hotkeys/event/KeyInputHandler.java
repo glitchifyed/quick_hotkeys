@@ -1,10 +1,15 @@
 package net.glitchifyed.quick_hotkeys.event;
 
+import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.glitchifyed.quick_hotkeys.QuickHotkeys;
 import net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -16,10 +21,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
@@ -31,6 +33,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.UseAction;
 import net.minecraft.util.collection.DefaultedList;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
 
 public class KeyInputHandler {
     public static final String KEY_CATEGORY = "key.category.glitchifyed.quick_hotkeys";
@@ -45,9 +49,16 @@ public class KeyInputHandler {
     private static boolean totemPressed;
 
     private static final int ARMOUR_SLOT = 6;
-    private static final int OFFHAND_SLOT = 45;
+
+    private static final int OFFHAND_SLOT1 = 45;
+    private static final int OFFHAND_SLOT2 = 40;
+
+    private static MinecraftClient CLIENT;
+    private static ClientPlayerEntity PLAYER;
 
     public static void initialiseKeyInputHandler() {
+        CLIENT = QuickHotkeysClient.CLIENT;
+
         equipElytraKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 KEY_ELYTRA,
                 InputUtil.Type.KEYSYM,
@@ -85,14 +96,9 @@ public class KeyInputHandler {
 
         elytraPressed = true;
 
-        int firstSlot = ARMOUR_SLOT;
+        PLAYER = CLIENT.player;
 
-        int swapSlot = -1;
-
-        int priorityDurability = -1;
-        int priorityEnchants = -1;
-
-        PlayerInventory playerInventory = QuickHotkeysClient.CLIENT.player.getInventory();
+        PlayerInventory playerInventory = PLAYER.getInventory();
         DefaultedList<ItemStack> inventory = playerInventory.main;
         ItemStack chestplateSlot = playerInventory.armor.get(2);
 
@@ -102,56 +108,75 @@ public class KeyInputHandler {
 
         boolean swapIsElytra = !wearingElytra;
 
-        ItemStack offhandSlot = QuickHotkeysClient.CLIENT.player.getOffHandStack();
+        ItemStack offhandSlot = PLAYER.getOffHandStack();
         if (doesItemGoInChestplateSlot(offhandSlot) && (wearingNothing || wearingChestplate && isItemElytra(offhandSlot) || wearingElytra)) {
-            firstSlot = OFFHAND_SLOT;
-            swapSlot = 38;
+            CLIENT.interactionManager.clickSlot(
+                    PLAYER.playerScreenHandler.syncId,
+                    ARMOUR_SLOT,
+                    OFFHAND_SLOT2,
+                    SlotActionType.SWAP,
+                    PLAYER
+            );
+
+            QuickHotkeysClient.PlaySound(swapIsElytra ? SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value() : SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
+
+            return;
         }
 
-        if (swapSlot == -1) {
-            for (ItemStack itemStack : inventory) {
-                Item item = itemStack.getItem();
-                if (item == Items.AIR) {
-                    continue;
-                }
+        int swapSlot = -1;
 
-                if (!doesItemGoInChestplateSlot(itemStack)) {
-                    continue;
-                }
+        int priorityDurability = -1;
+        int priorityEnchants = -1;
 
-                boolean isElytra = isItemElytra(itemStack);
-                if (wearingNothing || wearingElytra && !isElytra || wearingChestplate) {
-                    if (!wearingElytra) {
-                        int durability = (int)((float)(itemStack.getMaxDamage() - itemStack.getDamage()) * (getEnchantCountOfItemStack(itemStack) * 0.5f + 1));
-                        if (durability <= priorityDurability) {
-                            continue;
-                        }
-
-                        priorityDurability = durability;
-                        swapSlot = inventory.indexOf(itemStack);
-
-                        continue;
-                    }
-
-                    int durability = itemStack.getMaxDamage();
-                    if (durability > priorityDurability) {
-                        priorityDurability = durability;
-                        priorityEnchants = -1;
-                    }
-
-                    if (durability < priorityDurability) {
-                        continue;
-                    }
-
-                    int enchants = getEnchantCountOfItemStack(itemStack);
-                    if (enchants <= priorityEnchants) {
-                        continue;
-                    }
-
-                    priorityEnchants = enchants;
-                    swapSlot = inventory.indexOf(itemStack);
-                }
+        for (ItemStack itemStack : inventory) {
+            Item item = itemStack.getItem();
+            if (item == Items.AIR) {
+                continue;
             }
+
+            if (!doesItemGoInChestplateSlot(itemStack)) {
+                continue;
+            }
+
+            boolean isElytra = isItemElytra(itemStack);
+
+            if (wearingElytra && isElytra) {
+                continue;
+            }
+
+            if (wearingChestplate && !isElytra) {
+                continue;
+            }
+
+            if (!wearingElytra) {
+                int durability = (int) ((float) (itemStack.getMaxDamage() - itemStack.getDamage()) * (getEnchantCountOfItemStack(itemStack) * 0.5f + 1));
+                if (durability <= priorityDurability) {
+                    continue;
+                }
+
+                priorityDurability = durability;
+                swapSlot = inventory.indexOf(itemStack);
+
+                continue;
+            }
+
+            int durability = itemStack.getMaxDamage();
+            if (durability > priorityDurability) {
+                priorityDurability = durability;
+                priorityEnchants = -1;
+            }
+
+            if (durability < priorityDurability) {
+                continue;
+            }
+
+            int enchants = getEnchantCountOfItemStack(itemStack);
+            if (enchants <= priorityEnchants) {
+                continue;
+            }
+
+            priorityEnchants = enchants;
+            swapSlot = inventory.indexOf(itemStack);
         }
 
         if (swapSlot == -1) {
@@ -160,22 +185,9 @@ public class KeyInputHandler {
             return;
         }
 
-        /*QuickHotkeysClient.CLIENT.interactionManager.clickSlot(
-                QuickHotkeysClient.CLIENT.player.playerScreenHandler.syncId,
-                firstSlot,
-                swapSlot,
-                SlotActionType.SWAP,
-                QuickHotkeysClient.CLIENT.player
-        );*/
+        AttemptToSwapSlot(swapSlot, ARMOUR_SLOT);
 
-        AttemptItemSwap(firstSlot, swapSlot);
-
-        if (swapIsElytra) {
-            QuickHotkeysClient.PlaySound(SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value(), 1f, 1f);
-        }
-        else {
-            QuickHotkeysClient.PlaySound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
-        }
+        QuickHotkeysClient.PlaySound(swapIsElytra ? SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value() : SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
     }
 
     private static void attemptTotemSwap() {
@@ -191,9 +203,11 @@ public class KeyInputHandler {
 
         totemPressed = true;
 
+        PLAYER = CLIENT.player;
+
         int swapSlot = -1;
 
-        ItemStack offhandSlot = QuickHotkeysClient.CLIENT.player.getOffHandStack();
+        ItemStack offhandSlot = PLAYER.getOffHandStack();
 
         if (isItemTotem(offhandSlot)) {
             QuickHotkeysClient.PlaySound(SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL, 1f);
@@ -201,7 +215,7 @@ public class KeyInputHandler {
             return;
         }
 
-        PlayerInventory playerInventory = QuickHotkeysClient.CLIENT.player.getInventory();
+        PlayerInventory playerInventory = PLAYER.getInventory();
         DefaultedList<ItemStack> inventory = playerInventory.main;
         for (ItemStack itemStack : inventory) {
             if (!isItemTotem(itemStack)) {
@@ -219,13 +233,7 @@ public class KeyInputHandler {
             return;
         }
 
-        QuickHotkeysClient.CLIENT.interactionManager.clickSlot(
-                QuickHotkeysClient.CLIENT.player.playerScreenHandler.syncId,
-                OFFHAND_SLOT,
-                swapSlot,
-                SlotActionType.SWAP,
-                QuickHotkeysClient.CLIENT.player
-        );
+        AttemptToSwapSlot(swapSlot, OFFHAND_SLOT1);
 
         QuickHotkeysClient.PlaySound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
     }
@@ -252,7 +260,9 @@ public class KeyInputHandler {
             return false;
         }
 
-        return QuickHotkeysClient.CLIENT.player.getPreferredEquipmentSlot(itemStack) == EquipmentSlot.CHEST;
+        PLAYER = CLIENT.player;
+
+        return PLAYER.getPreferredEquipmentSlot(itemStack) == EquipmentSlot.CHEST;
     }
 
     private static boolean checkItemNameForElytra(ItemStack itemStack) {
@@ -260,62 +270,54 @@ public class KeyInputHandler {
     }
 
     private static boolean isItemElytra(ItemStack itemStack) {
-        return doesItemGoInChestplateSlot(itemStack) && checkItemNameForElytra(itemStack);
+        return itemStack.getItem() instanceof ElytraItem;
+        //return doesItemGoInChestplateSlot(itemStack) && checkItemNameForElytra(itemStack);
     }
 
     private static boolean isItemChestplate(ItemStack itemStack) {
-        return doesItemGoInChestplateSlot(itemStack) && !checkItemNameForElytra(itemStack);
+        return doesItemGoInChestplateSlot(itemStack) && !isItemElytra(itemStack);
     }
 
     private static boolean isItemTotem(ItemStack itemStack) {
         return itemStackContainsString(itemStack, "totem");
     }
 
-    private static void AttemptItemSwap(int slot_id, int button) {
-        ClientPlayerEntity player = QuickHotkeysClient.CLIENT.player;
-        ScreenHandler screenHandler = player.currentScreenHandler;
+    private static void AttemptToSwapSlot(int slotId, int equippedSlotId) {
+        PLAYER = CLIENT.player;
 
-        /*QuickHotkeysClient.CLIENT.interactionManager.clickSlot(
-                screenHandler.syncId,
-                slot_id,
-                button,
-                SlotActionType.SWAP,
-                player
-        );*/
+        // if its in the hotbar
+        if (slotId < 9) {
+            CLIENT.interactionManager.clickSlot(
+                    PLAYER.playerScreenHandler.syncId,
+                    equippedSlotId,
+                    slotId,
+                    SlotActionType.SWAP,
+                    PLAYER
+            );
+        } else { // do the hacky workaround because mojang added checks if its not in the hotbar (WHY)
+            CLIENT.interactionManager.clickSlot(
+                    PLAYER.playerScreenHandler.syncId,
+                    slotId,
+                    0,
+                    SlotActionType.PICKUP,
+                    PLAYER
+            );
 
-        PlayerInventory playerInventory = player.getInventory();
+            CLIENT.interactionManager.clickSlot(
+                    PLAYER.playerScreenHandler.syncId,
+                    equippedSlotId,
+                    0,
+                    SlotActionType.PICKUP,
+                    PLAYER
+            );
 
-        ItemStack itemStack5 = playerInventory.getStack(button);
-        Slot slot = screenHandler.slots.get(slot_id);
-        ItemStack itemStack = slot.getStack();
-        /*if (!itemStack.isEmpty()) {
-            if (slot.canTakeItems(player) && slot.canInsert(itemStack5)) {
-                int p = slot.getMaxItemCount(itemStack5);
-                if (itemStack5.getCount() > p) {
-                    slot.setStack(itemStack5.split(p));
-                    slot.onTakeItem(player, itemStack);
-                } else {
-                    playerInventory.setStack(button, itemStack);
-                    slot.setStack(itemStack5);
-                    slot.onTakeItem(player, itemStack);
-                }
-            }
-        }*/
-
-        // for client updating
-        playerInventory.setStack(button, itemStack);
-        slot.setStack(itemStack5);
-        slot.onTakeItem(player, itemStack);
-
-        // how do i send packets?
-        QuickHotkeysClient.CLIENT.interactionManager.clickSlot(
-                screenHandler.syncId,
-                slot_id,
-                button,
-                SlotActionType.SWAP,
-                player
-        );
-
-        //screenHandler.syncState();
+            CLIENT.interactionManager.clickSlot(
+                    PLAYER.playerScreenHandler.syncId,
+                    slotId,
+                    0,
+                    SlotActionType.PICKUP,
+                    PLAYER
+            );
+        }
     }
 }
