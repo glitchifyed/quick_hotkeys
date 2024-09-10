@@ -2,19 +2,28 @@ package net.glitchifyed.quick_hotkeys.event;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.glitchifyed.quick_hotkeys.QuickHotkeys;
 import net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.Sound;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
+import net.minecraft.screen.PlayerScreenHandler;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -151,15 +160,22 @@ public class KeyInputHandler {
             return;
         }
 
-        QuickHotkeysClient.CLIENT.interactionManager.clickSlot(
+        /*QuickHotkeysClient.CLIENT.interactionManager.clickSlot(
                 QuickHotkeysClient.CLIENT.player.playerScreenHandler.syncId,
                 firstSlot,
                 swapSlot,
                 SlotActionType.SWAP,
                 QuickHotkeysClient.CLIENT.player
-        );
+        );*/
 
-        QuickHotkeysClient.PlaySound(swapIsElytra ? SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA : SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f);
+        AttemptItemSwap(firstSlot, swapSlot);
+
+        if (swapIsElytra) {
+            QuickHotkeysClient.PlaySound(SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value(), 1f, 1f);
+        }
+        else {
+            QuickHotkeysClient.PlaySound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
+        }
     }
 
     private static void attemptTotemSwap() {
@@ -211,14 +227,16 @@ public class KeyInputHandler {
                 QuickHotkeysClient.CLIENT.player
         );
 
-        QuickHotkeysClient.PlaySound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f);
+        QuickHotkeysClient.PlaySound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
     }
 
     private static int getEnchantCountOfItemStack(ItemStack itemStack) {
         int count = 0;
 
-        for (var entry : EnchantmentHelper.get(itemStack).entrySet()) {
-            count += entry.getValue();
+        var enchantments = EnchantmentHelper.getEnchantments(itemStack);
+
+        for (var entry : enchantments.getEnchantments()) {
+            count += enchantments.getLevel(entry);
         }
 
         return count;
@@ -228,8 +246,13 @@ public class KeyInputHandler {
         return itemStack.getItem().getName().getString().toLowerCase().contains(contains.toLowerCase());
     }
 
+    // ITS NOT STATIC ANYMORE 😭
     private static boolean doesItemGoInChestplateSlot(ItemStack itemStack) {
-        return itemStack.getItem() != Items.AIR && MobEntity.getPreferredEquipmentSlot(itemStack) == EquipmentSlot.CHEST;
+        if (itemStack.getItem() == Items.AIR) {
+            return false;
+        }
+
+        return QuickHotkeysClient.CLIENT.player.getPreferredEquipmentSlot(itemStack) == EquipmentSlot.CHEST;
     }
 
     private static boolean checkItemNameForElytra(ItemStack itemStack) {
@@ -246,5 +269,53 @@ public class KeyInputHandler {
 
     private static boolean isItemTotem(ItemStack itemStack) {
         return itemStackContainsString(itemStack, "totem");
+    }
+
+    private static void AttemptItemSwap(int slot_id, int button) {
+        ClientPlayerEntity player = QuickHotkeysClient.CLIENT.player;
+        ScreenHandler screenHandler = player.currentScreenHandler;
+
+        /*QuickHotkeysClient.CLIENT.interactionManager.clickSlot(
+                screenHandler.syncId,
+                slot_id,
+                button,
+                SlotActionType.SWAP,
+                player
+        );*/
+
+        PlayerInventory playerInventory = player.getInventory();
+
+        ItemStack itemStack5 = playerInventory.getStack(button);
+        Slot slot = screenHandler.slots.get(slot_id);
+        ItemStack itemStack = slot.getStack();
+        /*if (!itemStack.isEmpty()) {
+            if (slot.canTakeItems(player) && slot.canInsert(itemStack5)) {
+                int p = slot.getMaxItemCount(itemStack5);
+                if (itemStack5.getCount() > p) {
+                    slot.setStack(itemStack5.split(p));
+                    slot.onTakeItem(player, itemStack);
+                } else {
+                    playerInventory.setStack(button, itemStack);
+                    slot.setStack(itemStack5);
+                    slot.onTakeItem(player, itemStack);
+                }
+            }
+        }*/
+
+        // for client updating
+        playerInventory.setStack(button, itemStack);
+        slot.setStack(itemStack5);
+        slot.onTakeItem(player, itemStack);
+
+        // how do i send packets?
+        QuickHotkeysClient.CLIENT.interactionManager.clickSlot(
+                screenHandler.syncId,
+                slot_id,
+                button,
+                SlotActionType.SWAP,
+                player
+        );
+
+        //screenHandler.syncState();
     }
 }
