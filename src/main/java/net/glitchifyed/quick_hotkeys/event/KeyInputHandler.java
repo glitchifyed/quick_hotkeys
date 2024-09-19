@@ -29,6 +29,7 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.UseAction;
 import net.minecraft.util.collection.DefaultedList;
@@ -42,11 +43,15 @@ public class KeyInputHandler {
     public static final String KEY_ELYTRA = "key.glitchifyed.quick_hotkeys.equip_elytra";
     public static final String KEY_TOTEM = "key.glitchifyed.quick_hotkeys.equip_totem";
 
+    public static final String KEY_AUTO = "key.glitchifyed.quick_hotkeys.automatic_elytra";
+
     public static KeyBinding equipElytraKeyBinding;
     public static KeyBinding equipTotemKeyBinding;
+    public static KeyBinding toggleAutoElytraBinding;
 
     private static boolean elytraPressed;
     private static boolean totemPressed;
+    private static boolean autoPressed;
 
     private static final int ARMOUR_SLOT = 6;
 
@@ -73,17 +78,25 @@ public class KeyInputHandler {
                 KEY_CATEGORY
         ));
 
+        toggleAutoElytraBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                KEY_AUTO,
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_R,
+                KEY_CATEGORY
+        ));
+
         registerCurrentKeyInputs();
     }
 
     public static void registerCurrentKeyInputs() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            attemptElytraSwap();
+            checkElytraSwapInput();
             attemptTotemSwap();
+            toggleAutoElytra();
         });
     }
 
-    private static void attemptElytraSwap() {
+    private static void checkElytraSwapInput() {
         if (!equipElytraKeyBinding.isPressed()) {
             elytraPressed = false;
 
@@ -96,6 +109,30 @@ public class KeyInputHandler {
 
         elytraPressed = true;
 
+        attemptElytraSwap(0);
+    }
+
+    private static void toggleAutoElytra() {
+        if (!toggleAutoElytraBinding.isPressed()) {
+            autoPressed = false;
+
+            return;
+        }
+
+        if (autoPressed) {
+            return;
+        }
+
+        autoPressed = true;
+
+        boolean enabled = !QuickHotkeysClient.CONFIG.autoSwapEnabled;
+
+        QuickHotkeysClient.CONFIG.autoSwapEnabled = enabled;
+
+        CLIENT.inGameHud.getChatHud().addMessage(Text.literal(enabled ? "[Quick Hotkeys] Enabled automatic elytra swapping" : "[Quick Hotkeys] Disabled automatic elytra swapping"));
+    }
+
+    public static boolean attemptElytraSwap(int swapMode) {
         PLAYER = CLIENT.player;
 
         PlayerInventory playerInventory = PLAYER.getInventory();
@@ -108,25 +145,44 @@ public class KeyInputHandler {
 
         boolean swapIsElytra = !wearingElytra;
 
-        ItemStack offhandSlot = PLAYER.getOffHandStack();
-        if (doesItemGoInChestplateSlot(offhandSlot) && (wearingNothing || wearingChestplate && isItemElytra(offhandSlot) || wearingElytra)) {
-            CLIENT.interactionManager.clickSlot(
-                    PLAYER.playerScreenHandler.syncId,
-                    ARMOUR_SLOT,
-                    OFFHAND_SLOT2,
-                    SlotActionType.SWAP,
-                    PLAYER
-            );
+        boolean swapBothWays = swapMode == 0;
+        boolean swapOnlyElytra = swapMode == 1;
+        boolean swapOnlyChestplate = swapMode == 2;
 
-            QuickHotkeysClient.PlaySound(swapIsElytra ? SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value() : SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
+        if (swapOnlyElytra) {
+            if (wearingElytra) {
+                return false;
+            }
+        }
+        else if (swapOnlyChestplate) {
+            if (!wearingElytra) {
+                return false;
+            }
+        }
 
-            return;
+        if (swapBothWays) {
+            ItemStack offhandSlot = PLAYER.getOffHandStack();
+            if (doesItemGoInChestplateSlot(offhandSlot) && (wearingNothing || wearingChestplate && isItemElytra(offhandSlot) || wearingElytra)) {
+                CLIENT.interactionManager.clickSlot(
+                        PLAYER.playerScreenHandler.syncId,
+                        ARMOUR_SLOT,
+                        OFFHAND_SLOT2,
+                        SlotActionType.SWAP,
+                        PLAYER
+                );
+
+                QuickHotkeysClient.PlaySound(swapIsElytra ? SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value() : SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
+
+                return true;
+            }
         }
 
         int swapSlot = -1;
 
         int priorityDurability = -1;
         int priorityEnchants = -1;
+
+        ItemStack swapStack = ItemStack.EMPTY;
 
         for (ItemStack itemStack : inventory) {
             Item item = itemStack.getItem();
@@ -177,17 +233,21 @@ public class KeyInputHandler {
 
             priorityEnchants = enchants;
             swapSlot = inventory.indexOf(itemStack);
+
+            swapStack = itemStack;
         }
 
         if (swapSlot == -1) {
             QuickHotkeysClient.PlaySound(SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL, 1f);
 
-            return;
+            return false;
         }
 
         AttemptToSwapSlot(swapSlot, ARMOUR_SLOT);
 
         QuickHotkeysClient.PlaySound(swapIsElytra ? SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value() : SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
+
+        return true;
     }
 
     private static void attemptTotemSwap() {

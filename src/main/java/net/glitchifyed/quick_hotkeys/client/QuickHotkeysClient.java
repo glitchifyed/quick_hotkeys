@@ -1,6 +1,8 @@
 package net.glitchifyed.quick_hotkeys.client;
 
+import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import net.fabricmc.api.ClientModInitializer;
+import net.glitchifyed.quick_hotkeys.config.QuickHotkeysConfig;
 import net.glitchifyed.quick_hotkeys.event.KeyInputHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -14,17 +16,22 @@ public class QuickHotkeysClient implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static MinecraftClient CLIENT;
 
+    public static QuickHotkeysConfig CONFIG = QuickHotkeysConfig.HANDLER.instance();
+
     @Override
     public void onInitializeClient() {
-        LOGGER.info("Getting the client");
+        LOGGER.info("Currently loading Quick Hotkeys!");
+
         CLIENT = MinecraftClient.getInstance();
         LOGGER.info("Got the client");
 
-        LOGGER.info("Registering keybinds");
         KeyInputHandler.initialiseKeyInputHandler();
-        LOGGER.info("Registered keybinds");
+        LOGGER.info("Registered keybinds!");
 
-        LOGGER.info("Quick hotkeys has been fully loaded!");
+        QuickHotkeysConfig.HANDLER.load();
+        LOGGER.info("Loaded config!!");
+
+        LOGGER.info("Quick Hotkeys has been fully loaded!");
     }
 
     public static void PlaySound(SoundEvent soundEvent, float pitch, float volume) {

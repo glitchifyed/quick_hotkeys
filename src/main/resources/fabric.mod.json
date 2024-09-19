@@ -17,12 +17,22 @@
   "entrypoints": {
     "client": [
       "net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient"
+    ],
+    "modmenu": [
+      "net.glitchifyed.quick_hotkeys.config.ModMenuIntegration"
     ]
   },
+  "mixins": [
+    "quick_hotkeys.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": ">=0.103",
     "minecraft": "~1.21",
-    "java": ">=21"
+    "java": ">=21",
+    "yet_another_config_lib_v3": ">=3.5.0"
+  },
+  "suggests": {
+    "modmenu": "*"
   }
 }
