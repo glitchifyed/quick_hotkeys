@@ -3,4 +3,12 @@ An elytra/chestplate swapping keybind. It prioritises items with a larger durabi
 
 A quick totem equipping keybind. Will equip a totem of undying into your offhand when pressed. Default keybind 'X'.
 
-https://www.modrinth.com/mod/quick_hotkeys
+**Adds automatic elytra swapping:**\
+When enabled, this will automatically equip your elytra when you attempt to fly with your chestplate still on. This is enabled by default and can be toggled by default with the 'R' keybind.
+
+**Official download links:**\
+https://modrinth.com/mod/quick_hotkeys \
+https://www.curseforge.com/minecraft/mc-mods/quick-hotkeys
+
+This mod is a remake of my older mod **Quick Elytra**. If you would like to use this mod for a Minecraft version before 1.20, use Quick Elytra instead.\
+https://modrinth.com/mod/quick-elytra
