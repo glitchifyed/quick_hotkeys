@@ -109,7 +109,7 @@ public class KeyInputHandler {
 
         elytraPressed = true;
 
-        attemptElytraSwap(0);
+        attemptElytraSwap(0, true);
     }
 
     private static void toggleAutoElytra() {
@@ -132,7 +132,7 @@ public class KeyInputHandler {
         CLIENT.inGameHud.getChatHud().addMessage(Text.literal(enabled ? "[Quick Hotkeys] Enabled automatic elytra swapping" : "[Quick Hotkeys] Disabled automatic elytra swapping"));
     }
 
-    public static boolean attemptElytraSwap(int swapMode) {
+    public static boolean attemptElytraSwap(int swapMode, boolean playError) {
         PLAYER = CLIENT.player;
 
         PlayerInventory playerInventory = PLAYER.getInventory();
@@ -181,8 +181,6 @@ public class KeyInputHandler {
 
         int priorityDurability = -1;
         int priorityEnchants = -1;
-
-        ItemStack swapStack = ItemStack.EMPTY;
 
         for (ItemStack itemStack : inventory) {
             Item item = itemStack.getItem();
@@ -233,12 +231,12 @@ public class KeyInputHandler {
 
             priorityEnchants = enchants;
             swapSlot = inventory.indexOf(itemStack);
-
-            swapStack = itemStack;
         }
 
         if (swapSlot == -1) {
-            QuickHotkeysClient.PlaySound(SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL, 1f);
+            if (playError) {
+                QuickHotkeysClient.PlaySound(SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL, 1f);
+            }
 
             return false;
         }

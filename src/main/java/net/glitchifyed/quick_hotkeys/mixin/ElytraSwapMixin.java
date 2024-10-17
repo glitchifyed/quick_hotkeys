@@ -47,12 +47,12 @@ public class ElytraSwapMixin {
             if (groundedChanged && airSwapped) {
                 airSwapped = false;
 
-                KeyInputHandler.attemptElytraSwap(2);
+                KeyInputHandler.attemptElytraSwap(2, false);
             }
         }
         // check if just jumped + flying disabled + not fall flying + not touching water & not levitating, then make sure the player hasnt already auto swapped, and make sure the swap actually succeeded
         else if (!groundedChanged && jumpChanged && jumping && !player.getAbilities().allowFlying && !player.isFallFlying() && !player.isTouchingWater() && !player.hasStatusEffect(StatusEffects.LEVITATION)) {
-            if (!airSwapped && KeyInputHandler.attemptElytraSwap(1)) {
+            if (!airSwapped && KeyInputHandler.attemptElytraSwap(1, false)) {
                 airSwapped = true;
 
                 player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
