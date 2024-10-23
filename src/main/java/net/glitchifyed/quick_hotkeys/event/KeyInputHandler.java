@@ -1,37 +1,19 @@
 package net.glitchifyed.quick_hotkeys.event;
 
-import com.google.common.collect.Lists;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.glitchifyed.quick_hotkeys.QuickHotkeys;
 import net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.Sound;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.UseAction;
 import net.minecraft.util.collection.DefaultedList;
 import org.lwjgl.glfw.GLFW;
 
@@ -328,8 +310,11 @@ public class KeyInputHandler {
     }
 
     private static boolean isItemElytra(ItemStack itemStack) {
-        return itemStack.getItem() instanceof ElytraItem;
+        //return itemStack.getItem() instanceof ElytraItem;
         //return doesItemGoInChestplateSlot(itemStack) && checkItemNameForElytra(itemStack);
+
+        // quick & dirty hack to detect elytra in 1.21.2 (i still need to find a better way!!!)
+        return itemStack.getItem().equals(Items.ELYTRA);
     }
 
     private static boolean isItemChestplate(ItemStack itemStack) {

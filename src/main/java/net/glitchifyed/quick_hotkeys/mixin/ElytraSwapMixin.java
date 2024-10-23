@@ -28,7 +28,7 @@ public class ElytraSwapMixin {
         ClientPlayerEntity player = (ClientPlayerEntity) (Object)this;
 
         // jump/ground check
-        boolean jumping = player.input.jumping;
+        boolean jumping = player.input.playerInput.jump();
         boolean grounded = player.isOnGround();
 
         boolean groundedChanged = grounded != lastGrounded;
@@ -51,7 +51,7 @@ public class ElytraSwapMixin {
             }
         }
         // check if just jumped + flying disabled + not fall flying + not touching water & not levitating, then make sure the player hasnt already auto swapped, and make sure the swap actually succeeded
-        else if (!groundedChanged && jumpChanged && jumping && !player.getAbilities().allowFlying && !player.isFallFlying() && !player.isTouchingWater() && !player.hasStatusEffect(StatusEffects.LEVITATION)) {
+        else if (!groundedChanged && jumpChanged && jumping && !player.getAbilities().allowFlying && !player.isTouchingWater() && !player.hasStatusEffect(StatusEffects.LEVITATION)) {
             if (!airSwapped && KeyInputHandler.attemptElytraSwap(1, false)) {
                 airSwapped = true;
 
