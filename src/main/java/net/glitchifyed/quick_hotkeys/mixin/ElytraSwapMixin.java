@@ -28,7 +28,7 @@ public class ElytraSwapMixin {
         ClientPlayerEntity player = (ClientPlayerEntity) (Object)this;
 
         // jump/ground check
-        boolean jumping = player.input.playerInput.jump();
+        boolean jumping = player.input.jumping;
         boolean grounded = player.isOnGround();
 
         boolean groundedChanged = grounded != lastGrounded;
