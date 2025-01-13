@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/QuickHotkeys.main.iml" filepath="$PROJECT_DIR$/.idea/modules/QuickHotkeys.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/QuickHotkeys.test.iml" filepath="$PROJECT_DIR$/.idea/modules/QuickHotkeys.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/quick_hotkeys.main.iml" filepath="$PROJECT_DIR$/.idea/modules/quick_hotkeys.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/quick_hotkeys.test.iml" filepath="$PROJECT_DIR$/.idea/modules/quick_hotkeys.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/quickhotkeys.main.iml" filepath="$PROJECT_DIR$/.idea/modules/quickhotkeys.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/quickhotkeys.test.iml" filepath="$PROJECT_DIR$/.idea/modules/quickhotkeys.test.iml" />
     </modules>
   </component>
 </project>

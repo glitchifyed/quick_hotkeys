@@ -11,6 +11,8 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -290,6 +292,10 @@ public class KeyInputHandler {
         return count;
     }
 
+    private static boolean itemStackIdContainsString(ItemStack itemStack, String contains) {
+        return Registries.ITEM.getId(itemStack.getItem()).toString().toLowerCase().contains(contains.toLowerCase());
+    }
+
     private static boolean itemStackContainsString(ItemStack itemStack, String contains) {
         return itemStack.getItem().getName().getString().toLowerCase().contains(contains.toLowerCase());
     }
@@ -305,16 +311,12 @@ public class KeyInputHandler {
         return PLAYER.getPreferredEquipmentSlot(itemStack) == EquipmentSlot.CHEST;
     }
 
-    private static boolean checkItemNameForElytra(ItemStack itemStack) {
-        return itemStackContainsString(itemStack, "elytra");
-    }
-
     private static boolean isItemElytra(ItemStack itemStack) {
         //return itemStack.getItem() instanceof ElytraItem;
         //return doesItemGoInChestplateSlot(itemStack) && checkItemNameForElytra(itemStack);
 
         // quick & dirty hack to detect elytra in 1.21.2 (i still need to find a better way!!!)
-        return itemStack.getItem().equals(Items.ELYTRA);
+        return /*itemStack.getItem().equals(Items.ELYTRA) ||*/ itemStackIdContainsString(itemStack, "elytra");
     }
 
     private static boolean isItemChestplate(ItemStack itemStack) {
@@ -322,7 +324,7 @@ public class KeyInputHandler {
     }
 
     private static boolean isItemTotem(ItemStack itemStack) {
-        return itemStackContainsString(itemStack, "totem");
+        return /*itemStack.getItem().equals(Items.TOTEM_OF_UNDYING) ||*/ itemStackIdContainsString(itemStack, "totem");
     }
 
     private static void AttemptToSwapSlot(int slotId, int equippedSlotId) {

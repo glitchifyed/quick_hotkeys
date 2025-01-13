@@ -11,6 +11,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import static net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient.LOGGER;
+
 public class QuickHotkeysConfig {
     public static ConfigClassHandler<QuickHotkeysConfig> HANDLER = ConfigClassHandler.createBuilder(QuickHotkeysConfig.class)
             .id(Identifier.of("quick_hotkeys", "config"))
@@ -22,15 +24,27 @@ public class QuickHotkeysConfig {
             .build();
 
     @SerialEntry
-    public boolean autoSwapEnabled = true;
+    public boolean autoSwapEnabled = false;
+
+    private static boolean loadedConfig = false;
 
     public static void saveConfig() {
         HANDLER.save();
     }
 
+    public static void loadConfig() {
+        if (loadedConfig) {
+            return;
+        }
+
+        loadedConfig = true;
+
+        HANDLER.load();
+    }
+
     public ConfigScreenFactory<?> GenerateScreen() {
         return parentScreen -> YetAnotherConfigLib.createBuilder()
-                .title(Text.literal("Quick Hotkeys Config"))
+                .title(Text.literal("Quick Elytra Config"))
                 .category(ConfigCategory.createBuilder()
                         .name(Text.literal("Quick Elytra"))
                         .tooltip(Text.literal("Quick Elytra functionality"))

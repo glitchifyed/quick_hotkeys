@@ -20,18 +20,15 @@ public class QuickHotkeysClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        LOGGER.info("Currently loading Quick Hotkeys!");
+        LOGGER.info("Currently loading Quick Hotkeys");
 
         CLIENT = MinecraftClient.getInstance();
         LOGGER.info("Got the client");
 
         KeyInputHandler.initialiseKeyInputHandler();
-        LOGGER.info("Registered keybinds!");
+        LOGGER.info("Registered keybinds");
 
-        QuickHotkeysConfig.HANDLER.load();
-        LOGGER.info("Loaded config!!");
-
-        LOGGER.info("Quick Hotkeys has been fully loaded!");
+        LOGGER.info("Quick Hotkeys has been fully loaded");
     }
 
     public static void PlaySound(SoundEvent soundEvent, float pitch, float volume) {
