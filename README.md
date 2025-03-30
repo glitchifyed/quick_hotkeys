@@ -1,3 +1,5 @@
+1.21.5 is in the works, but due to many changes on Mojang's backend, it may take a while.
+
 **Adds two hotkeys:**\
 An elytra/chestplate swapping keybind. It prioritises items with a larger durability and then with a larger amount of enchant levels. Will also prioritise chestplates/elytra that are in your offhand. Default keybind 'G'.
 
