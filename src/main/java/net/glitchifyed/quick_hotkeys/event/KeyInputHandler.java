@@ -120,8 +120,13 @@ public class KeyInputHandler {
         PLAYER = CLIENT.player;
 
         PlayerInventory playerInventory = PLAYER.getInventory();
-        DefaultedList<ItemStack> inventory = playerInventory.main;
-        ItemStack chestplateSlot = playerInventory.armor.get(2);
+        // Hauptinventar: Slots 0-35
+        List<ItemStack> inventory = new java.util.ArrayList<>();
+        for (int i = 0; i < 36; i++) {
+            inventory.add(playerInventory.getStack(i));
+        }
+        // Brustplatten-/Elytra-Slot: Slot 38
+        ItemStack chestplateSlot = playerInventory.getStack(38);
 
         boolean wearingNothing = chestplateSlot.getItem() == Items.AIR;
         boolean wearingElytra = !wearingNothing && isItemElytra(chestplateSlot);
@@ -258,7 +263,10 @@ public class KeyInputHandler {
         }
 
         PlayerInventory playerInventory = PLAYER.getInventory();
-        DefaultedList<ItemStack> inventory = playerInventory.main;
+        List<ItemStack> inventory = new java.util.ArrayList<>();
+        for (int i = 0; i < 36; i++) {
+            inventory.add(playerInventory.getStack(i));
+        }
         for (ItemStack itemStack : inventory) {
             if (!isItemTotem(itemStack)) {
                 continue;
