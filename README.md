@@ -1,16 +1,3 @@
-1.21.5 is in the works, but due to many changes on Mojang's backend, it may take a while.
-
-**Adds two hotkeys:**\
-An elytra/chestplate swapping keybind. It prioritises items with a larger durability and then with a larger amount of enchant levels. Will also prioritise chestplates/elytra that are in your offhand. Default keybind 'G'.
-
-A quick totem equipping keybind. Will equip a totem of undying into your offhand when pressed. Default keybind 'X'.
-
-**Adds automatic elytra swapping:**\
-When enabled, this will automatically equip your elytra when you attempt to fly with your chestplate still on. This is enabled by default and can be toggled by default with the 'R' keybind.
-
-**Official download links:**\
-https://modrinth.com/mod/quick_hotkeys \
-https://www.curseforge.com/minecraft/mc-mods/quick-hotkeys
-
-This mod is a remake of my older mod **Quick Elytra**. If you would like to use this mod for a Minecraft version before 1.20, use Quick Elytra instead.\
-https://modrinth.com/mod/quick-elytra
+This is a branch of Quick Elytra Reborn designed to work on servers with inventory detection. Some servers will check your inventory and prevent you from moving totems directly from inventory to your left hand. Pressing the hotkey will move the totem of the shortcut bar to the left hand and replenish a totem from the inventory to its original position. If there is no totem in the shortcut bar, pressing the hotkey will move the totem from the inventory to the empty space in the shortcut bar (if there is no empty space, it will be exchanged with the last item (which cannot be configured in the game because I know nothing about graphical interfaces). At this point, you need to press the hotkey again to move the totem to the assistant and replenish one from the inventory. (I am unwilling to add automatic detection function because it may go against the original intention of this module)
+Perhaps it's good news? This branch works for Minecraft 1.21.6 and 1.21.7, and may also run on 1.21.8 (I haven't tested it). I don't know if it can run on a lower version either. If you need the 1.21.7 version of the original mod, you can find the one made by Exonerie in the pull request.
+Also, if you want to research what I have changed, you can look for the parts with Chinese annotations. I'm very sorry, my English level is very poor, even this description document was written using a translator.
