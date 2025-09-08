@@ -50,7 +50,7 @@ public class ElytraSwapMixin {
                 KeyInputHandler.attemptElytraSwap(2, false);
             }
         }
-        // check if just jumped + flying disabled + not fall flying + not touching water & not levitating, then make sure the player hasnt already auto swapped, and make sure the swap actually succeeded
+        // check if just jumped + flying disabled + not touching water & not levitating, then make sure the player hasnt already auto swapped, and make sure the swap actually succeeded
         else if (!groundedChanged && jumpChanged && jumping && !player.getAbilities().allowFlying && !player.isTouchingWater() && !player.hasStatusEffect(StatusEffects.LEVITATION)) {
             if (!airSwapped && KeyInputHandler.attemptElytraSwap(1, false)) {
                 airSwapped = true;

@@ -8,6 +8,7 @@ import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -23,10 +24,18 @@ public class QuickHotkeysConfig {
                     .build())
             .build();
 
+    public static QuickHotkeysConfig createInstance() {
+        INSTANCE = HANDLER.instance();
+
+        return INSTANCE;
+    }
+
     @SerialEntry
     public boolean autoSwapEnabled = false;
 
     private static boolean loadedConfig = false;
+
+    public static QuickHotkeysConfig INSTANCE;
 
     public static void saveConfig() {
         HANDLER.save();
@@ -54,7 +63,7 @@ public class QuickHotkeysConfig {
                                 .option(Option.<Boolean>createBuilder()
                                         .name(Text.literal("Automated Elytra"))
                                         .description(OptionDescription.of(Text.literal("When enabled, pressing space while in mid-air will automatically swap your currently worn chestplate with your best pair of elytra")))
-                                        .binding(true, () -> this.autoSwapEnabled, newVal -> this.autoSwapEnabled = newVal)
+                                        .binding(true, () -> INSTANCE.autoSwapEnabled, newVal -> INSTANCE.autoSwapEnabled = newVal)
                                         .controller(TickBoxControllerBuilder::create)
                                         .build())
                                 .build())

@@ -38,6 +38,7 @@ public class KeyInputHandler {
     private static boolean autoPressed;
 
     private static final int ARMOUR_SLOT = 6;
+    private static final int CHESTPLATE_SLOT = 38;
 
     private static final int OFFHAND_SLOT1 = 45;
     private static final int OFFHAND_SLOT2 = 40;
@@ -120,8 +121,8 @@ public class KeyInputHandler {
         PLAYER = CLIENT.player;
 
         PlayerInventory playerInventory = PLAYER.getInventory();
-        DefaultedList<ItemStack> inventory = playerInventory.main;
-        ItemStack chestplateSlot = playerInventory.armor.get(2);
+        DefaultedList<ItemStack> inventory = playerInventory.getMainStacks();
+        ItemStack chestplateSlot = playerInventory.getStack(CHESTPLATE_SLOT);
 
         boolean wearingNothing = chestplateSlot.getItem() == Items.AIR;
         boolean wearingElytra = !wearingNothing && isItemElytra(chestplateSlot);
@@ -258,7 +259,7 @@ public class KeyInputHandler {
         }
 
         PlayerInventory playerInventory = PLAYER.getInventory();
-        DefaultedList<ItemStack> inventory = playerInventory.main;
+        DefaultedList<ItemStack> inventory = playerInventory.getMainStacks();
         for (ItemStack itemStack : inventory) {
             if (!isItemTotem(itemStack)) {
                 continue;

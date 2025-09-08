@@ -16,7 +16,7 @@ public class QuickHotkeysClient implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static MinecraftClient CLIENT;
 
-    public static QuickHotkeysConfig CONFIG = QuickHotkeysConfig.HANDLER.instance();
+    public static QuickHotkeysConfig CONFIG = QuickHotkeysConfig.createInstance();
 
     @Override
     public void onInitializeClient() {

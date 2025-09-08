@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "quick_hotkeys",
   "version": "${version}",
-  "name": "Quick Hotkeys",
+  "name": "Quick Elytra Reborn",
   "description": "Adds useful QOL hotkeys, such as an elytra swap hotkey and quick totem equip hotkey. Also includes an optional automatic elytra-swap functionality.",
   "authors": ["glitchifyed"],
   "contact": {
@@ -27,10 +27,10 @@
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
-    "fabric": ">=0.102",
-    "minecraft": "~1.21",
+    "fabric": ">=0.133",
+    "minecraft": ">=1.21.6",
     "java": ">=21",
-    "yet_another_config_lib_v3": ">=3.5.0"
+    "yet_another_config_lib_v3": ">=3.7.1"
   },
   "suggests": {
     "modmenu": "*"
