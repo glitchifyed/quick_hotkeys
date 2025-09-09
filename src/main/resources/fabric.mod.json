@@ -15,6 +15,9 @@
   "icon": "assets/quick_hotkeys/icon.png",
   "environment": "client",
   "entrypoints": {
+    "main": [
+      "net.glitchifyed.quick_hotkeys.QuickHotkeys"
+    ],
     "client": [
       "net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient"
     ],

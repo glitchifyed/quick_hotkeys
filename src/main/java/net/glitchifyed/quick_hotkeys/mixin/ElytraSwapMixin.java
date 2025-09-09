@@ -8,20 +8,21 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
 public class ElytraSwapMixin {
-    boolean lastJump = false;
-    boolean lastGrounded = true;
+    @Unique boolean lastJump = false;
+    @Unique boolean lastGrounded = true;
 
-    boolean airSwapped = false;
+    @Unique boolean airSwapped = false;
 
     @Inject(method = "tickMovement", at = @At("HEAD"))
     private void swapElytra(CallbackInfo info) {
-        if (!QuickHotkeysClient.CONFIG.autoSwapEnabled) {
+        if (!QuickHotkeysConfig.autoSwapEnabled) {
             return;
         }
 
@@ -55,6 +56,7 @@ public class ElytraSwapMixin {
             if (!airSwapped && KeyInputHandler.attemptElytraSwap(1, false)) {
                 airSwapped = true;
 
+                player.checkGliding();
                 player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
             }
         }

@@ -3,10 +3,13 @@ package net.glitchifyed.quick_hotkeys.event;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient;
+import net.glitchifyed.quick_hotkeys.config.QuickHotkeysConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
@@ -37,11 +40,15 @@ public class KeyInputHandler {
     private static boolean totemPressed;
     private static boolean autoPressed;
 
+    private static boolean elytraGliding;
+
     private static final int ARMOUR_SLOT = 6;
     private static final int CHESTPLATE_SLOT = 38;
 
     private static final int OFFHAND_SLOT1 = 45;
     private static final int OFFHAND_SLOT2 = 40;
+
+    private static int fireworkSlot = -1;
 
     private static MinecraftClient CLIENT;
     private static ClientPlayerEntity PLAYER;
@@ -79,6 +86,36 @@ public class KeyInputHandler {
             attemptTotemSwap();
             toggleAutoElytra();
         });
+
+        ClientTickEvents.END_WORLD_TICK.register(world -> {
+            checkFireworkSwap();
+        });
+    }
+
+    private static void checkFireworkSwap() {
+        boolean lastGliding = elytraGliding;
+        elytraGliding = CLIENT.player.isGliding();
+
+        boolean changedGliding = lastGliding != elytraGliding;
+
+        boolean attemptSwap = elytraGliding && fireworkSlot == -1 || !elytraGliding && fireworkSlot != -1;
+
+        if (QuickHotkeysConfig.fireworkRestockEnabled && elytraGliding && fireworkSlot != -1) {
+            ItemStack offhandStack = CLIENT.player.getOffHandStack();
+
+            if (!isItemFirework(offhandStack)) {
+                attemptFireworkSwap();
+                attemptFireworkSwap();
+            }
+        }
+
+        if (!changedGliding && !QuickHotkeysConfig.fireworkSwapEnabled) {
+            return;
+        }
+
+        if (attemptSwap) {
+            attemptFireworkSwap();
+        }
     }
 
     private static void checkElytraSwapInput() {
@@ -110,9 +147,9 @@ public class KeyInputHandler {
 
         autoPressed = true;
 
-        boolean enabled = !QuickHotkeysClient.CONFIG.autoSwapEnabled;
+        boolean enabled = !QuickHotkeysConfig.autoSwapEnabled;
 
-        QuickHotkeysClient.CONFIG.autoSwapEnabled = enabled;
+        QuickHotkeysConfig.autoSwapEnabled = enabled;
 
         CLIENT.inGameHud.getChatHud().addMessage(Text.literal(enabled ? "[Quick Hotkeys] Enabled automatic elytra swapping" : "[Quick Hotkeys] Disabled automatic elytra swapping"));
     }
@@ -226,7 +263,7 @@ public class KeyInputHandler {
             return false;
         }
 
-        AttemptToSwapSlot(swapSlot, ARMOUR_SLOT);
+        attemptToSwapSlot(swapSlot, ARMOUR_SLOT);
 
         QuickHotkeysClient.PlaySound(swapIsElytra ? SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value() : SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
 
@@ -250,14 +287,6 @@ public class KeyInputHandler {
 
         int swapSlot = -1;
 
-        ItemStack offhandSlot = PLAYER.getOffHandStack();
-
-        if (isItemTotem(offhandSlot)) {
-            QuickHotkeysClient.PlaySound(SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL, 1f);
-
-            return;
-        }
-
         PlayerInventory playerInventory = PLAYER.getInventory();
         DefaultedList<ItemStack> inventory = playerInventory.getMainStacks();
         for (ItemStack itemStack : inventory) {
@@ -271,14 +300,69 @@ public class KeyInputHandler {
         }
 
         if (swapSlot == -1) {
+            for (ItemStack itemStack : inventory) {
+                if (!isItemOffhandOption(itemStack)) {
+                    continue;
+                }
+
+                swapSlot = inventory.indexOf(itemStack);
+
+                break;
+            }
+        }
+
+        if (swapSlot == -1) {
             QuickHotkeysClient.PlaySound(SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL, 1f);
 
             return;
         }
 
-        AttemptToSwapSlot(swapSlot, OFFHAND_SLOT1);
+        attemptToSwapSlot(swapSlot, OFFHAND_SLOT1);
 
         QuickHotkeysClient.PlaySound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
+    }
+
+    private static void attemptFireworkSwap() {
+        PLAYER = CLIENT.player;
+
+        int swapSlot = -1;
+
+        if (fireworkSlot != -1) {
+            swapSlot = fireworkSlot;
+            fireworkSlot = -1;
+        }
+        else {
+            ItemStack offhandSlot = PLAYER.getOffHandStack();
+            if (isItemFirework(offhandSlot)) {
+                return;
+            }
+
+            int highestDuration = -1;
+            
+            PlayerInventory playerInventory = PLAYER.getInventory();
+            DefaultedList<ItemStack> inventory = playerInventory.getMainStacks();
+            for (ItemStack itemStack : inventory) {
+                if (!isItemFirework(itemStack)) {
+                    continue;
+                }
+
+                int duration = itemStack.get(DataComponentTypes.FIREWORKS).flightDuration();
+                if (duration <= highestDuration) {
+                    continue;
+                }
+
+                highestDuration = duration;
+                swapSlot = inventory.indexOf(itemStack);
+            }
+
+            if (swapSlot == -1) {
+                return;
+            }
+
+            fireworkSlot = swapSlot;
+        }
+
+        attemptToSwapSlot(swapSlot, OFFHAND_SLOT1);
     }
 
     private static int getEnchantCountOfItemStack(ItemStack itemStack) {
@@ -293,15 +377,6 @@ public class KeyInputHandler {
         return count;
     }
 
-    private static boolean itemStackIdContainsString(ItemStack itemStack, String contains) {
-        return Registries.ITEM.getId(itemStack.getItem()).toString().toLowerCase().contains(contains.toLowerCase());
-    }
-
-    private static boolean itemStackContainsString(ItemStack itemStack, String contains) {
-        return itemStack.getItem().getName().getString().toLowerCase().contains(contains.toLowerCase());
-    }
-
-    // ITS NOT STATIC ANYMORE 😭
     private static boolean doesItemGoInChestplateSlot(ItemStack itemStack) {
         if (itemStack.getItem() == Items.AIR) {
             return false;
@@ -313,22 +388,22 @@ public class KeyInputHandler {
     }
 
     private static boolean isItemElytra(ItemStack itemStack) {
-        //return itemStack.getItem() instanceof ElytraItem;
-        //return doesItemGoInChestplateSlot(itemStack) && checkItemNameForElytra(itemStack);
-
-        // quick & dirty hack to detect elytra in 1.21.2 (i still need to find a better way!!!)
-        return /*itemStack.getItem().equals(Items.ELYTRA) ||*/ itemStackIdContainsString(itemStack, "elytra");
-    }
-
-    private static boolean isItemChestplate(ItemStack itemStack) {
-        return doesItemGoInChestplateSlot(itemStack) && !isItemElytra(itemStack);
+        return QuickHotkeysConfig.elytraSwapItems.contains(itemStack.getItem());
     }
 
     private static boolean isItemTotem(ItemStack itemStack) {
-        return /*itemStack.getItem().equals(Items.TOTEM_OF_UNDYING) ||*/ itemStackIdContainsString(itemStack, "totem");
+        return QuickHotkeysConfig.totemSwapItems.contains(itemStack.getItem());
     }
 
-    private static void AttemptToSwapSlot(int slotId, int equippedSlotId) {
+    private static boolean isItemFirework(ItemStack itemStack) {
+        return QuickHotkeysConfig.fireworkSwapItems.contains(itemStack.getItem());
+    }
+
+    private static boolean isItemOffhandOption(ItemStack itemStack) {
+        return QuickHotkeysConfig.offhandSwapItems.contains(itemStack.getItem());
+    }
+
+    private static void attemptToSwapSlot(int slotId, int equippedSlotId) {
         PLAYER = CLIENT.player;
 
         // if its in the hotbar
