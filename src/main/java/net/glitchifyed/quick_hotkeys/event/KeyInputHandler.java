@@ -289,26 +289,19 @@ public class KeyInputHandler {
 
         PlayerInventory playerInventory = PLAYER.getInventory();
         DefaultedList<ItemStack> inventory = playerInventory.getMainStacks();
+
+        ItemStack offhandStack = PLAYER.getOffHandStack();
+
+        boolean swapToOne = !isItemTotem(offhandStack);
+
         for (ItemStack itemStack : inventory) {
-            if (!isItemTotem(itemStack)) {
+            if (swapToOne && !isItemTotem(itemStack) || !swapToOne && !isItemOffhandOption(itemStack)) {
                 continue;
             }
 
             swapSlot = inventory.indexOf(itemStack);
 
             break;
-        }
-
-        if (swapSlot == -1) {
-            for (ItemStack itemStack : inventory) {
-                if (!isItemOffhandOption(itemStack)) {
-                    continue;
-                }
-
-                swapSlot = inventory.indexOf(itemStack);
-
-                break;
-            }
         }
 
         if (swapSlot == -1) {
