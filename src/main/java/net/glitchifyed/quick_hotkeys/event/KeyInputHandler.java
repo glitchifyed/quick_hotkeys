@@ -339,12 +339,23 @@ public class KeyInputHandler {
                     continue;
                 }
 
-                int duration = itemStack.get(DataComponentTypes.FIREWORKS).flightDuration();
-                if (duration <= highestDuration) {
-                    continue;
+                if (highestDuration != -2) {
+                    var fireworksComponent = itemStack.get(DataComponentTypes.FIREWORKS);
+
+                    if (fireworksComponent != null) {
+                        int duration = fireworksComponent.flightDuration();
+                        if (duration <= highestDuration) {
+                            continue;
+                        }
+
+                        highestDuration = duration;
+                        swapSlot = inventory.indexOf(itemStack);
+
+                        continue;
+                    }
                 }
 
-                highestDuration = duration;
+                highestDuration = -2;
                 swapSlot = inventory.indexOf(itemStack);
             }
 
