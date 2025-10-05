@@ -1,7 +1,6 @@
 package net.glitchifyed.quick_hotkeys.config;
 
 import com.google.gson.GsonBuilder;
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.CyclingListControllerBuilder;
 import dev.isxander.yacl3.api.controller.ItemControllerBuilder;
