@@ -111,7 +111,7 @@ public class KeyInputHandler {
             }
         }
 
-        if (!changedGliding && !QuickHotkeysConfig.fireworkSwapEnabled) {
+        if (!changedGliding || !QuickHotkeysConfig.fireworkSwapEnabled) {
             return;
         }
 

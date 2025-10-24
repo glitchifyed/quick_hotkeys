@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/QuickHotkeys.main.iml" filepath="$PROJECT_DIR$/.idea/modules/QuickHotkeys.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/QuickHotkeys.test.iml" filepath="$PROJECT_DIR$/.idea/modules/QuickHotkeys.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/net.glitchifyed.qerupdate.main.iml" filepath="$PROJECT_DIR$/.idea/modules/net.glitchifyed.qerupdate.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/net.glitchifyed.qerupdate.test.iml" filepath="$PROJECT_DIR$/.idea/modules/net.glitchifyed.qerupdate.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/qerupdate.main.iml" filepath="$PROJECT_DIR$/.idea/modules/qerupdate.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/qerupdate.test.iml" filepath="$PROJECT_DIR$/.idea/modules/qerupdate.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/quick_hotkeys.main.iml" filepath="$PROJECT_DIR$/.idea/modules/quick_hotkeys.main.iml" />
