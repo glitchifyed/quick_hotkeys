@@ -26,8 +26,8 @@ import org.lwjgl.glfw.GLFW;
 import java.util.List;
 
 public class KeyInputHandler {
-    //public static final String KEY_CATEGORY = "key.category.glitchifyed.quick_hotkeys";
-    public static final KeyBinding.Category KEY_CATEGORY = new KeyBinding.Category(Identifier.of("glitchifyed", "quick_hotkeys"));// "key.category.glitchifyed.quick_hotkeys";
+    public static final String KEY_CATEGORY = "key.category.glitchifyed.quick_hotkeys"; // OLD LINE FOR COMPATIBILITY
+    //public static final KeyBinding.Category KEY_CATEGORY = new KeyBinding.Category(Identifier.of("glitchifyed", "quick_hotkeys")); // NEW LINE FOR NEWER VERSIONS
 
     public static final String KEY_ELYTRA = "key.glitchifyed.quick_hotkeys.equip_elytra";
     public static final String KEY_TOTEM = "key.glitchifyed.quick_hotkeys.equip_totem";
