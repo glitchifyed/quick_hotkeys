@@ -30,12 +30,12 @@
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
-    "fabric": ">=0.133",
-    "minecraft": ">=1.21.9",
+    "fabric": ">=${fabric_version}",
+    "minecraft": ">=${minecraft_version}",
     "java": ">=21",
-    "yet_another_config_lib_v3": ">=3.8.0"
+    "yet_another_config_lib_v3": ">=${yacl_version}"
   },
   "suggests": {
-    "modmenu": "*"
+    "modmenu": ">=${modmenu_version}"
   }
 }
