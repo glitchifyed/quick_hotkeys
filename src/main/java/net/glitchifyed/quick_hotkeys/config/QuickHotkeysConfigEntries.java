@@ -1,11 +1,10 @@
 package net.glitchifyed.quick_hotkeys.config;
 
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-
 import java.util.Collections;
 import java.util.List;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 public class QuickHotkeysConfigEntries {
     public boolean autoSwapEnabled = false;
