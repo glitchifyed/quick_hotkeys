@@ -7,21 +7,11 @@ import net.minecraft.client.gui.screen.Screen;
 
 public class ModMenuIntegration implements ModMenuApi {
     private Screen generateScreen(Screen parentScreen) {
-        //QuickHotkeysClient.LOGGER.info("LOADING CONFIG");
-
-        //QuickHotkeysConfig.loadConfig();
-
         return QuickHotkeysConfig.instance().GenerateScreen(parentScreen);
     }
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        /*QuickHotkeysClient.LOGGER.info("LOADING CONFIG");
-
-        QuickHotkeysConfig.loadConfig();
-
-        return QuickHotkeysConfig.HANDLER.instance().GenerateScreen();*/
-
         return this::generateScreen;
     }
 }

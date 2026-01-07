@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MinecraftMods.qerupdate.main.iml" filepath="$PROJECT_DIR$/.idea/modules/MinecraftMods.qerupdate.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MinecraftMods.qerupdate.test.iml" filepath="$PROJECT_DIR$/.idea/modules/MinecraftMods.qerupdate.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/QuickHotkeys.main.iml" filepath="$PROJECT_DIR$/.idea/modules/QuickHotkeys.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/QuickHotkeys.test.iml" filepath="$PROJECT_DIR$/.idea/modules/QuickHotkeys.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/net.glitchifyed.qerupdate.main.iml" filepath="$PROJECT_DIR$/.idea/modules/net.glitchifyed.qerupdate.main.iml" />

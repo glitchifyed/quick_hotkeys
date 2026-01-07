@@ -9,13 +9,10 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -23,11 +20,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.List;
-
 public class KeyInputHandler {
-    //public static final String KEY_CATEGORY = "key.category.glitchifyed.quick_hotkeys";
-    public static final KeyBinding.Category KEY_CATEGORY = new KeyBinding.Category(Identifier.of("glitchifyed", "quick_hotkeys"));// "key.category.glitchifyed.quick_hotkeys";
+    public static final KeyBinding.Category KEY_CATEGORY = new KeyBinding.Category(Identifier.of("glitchifyed", "quick_hotkeys"));
 
     public static final String KEY_ELYTRA = "key.glitchifyed.quick_hotkeys.equip_elytra";
     public static final String KEY_TOTEM = "key.glitchifyed.quick_hotkeys.equip_totem";
@@ -195,7 +189,7 @@ public class KeyInputHandler {
                         PLAYER
                 );
 
-                QuickHotkeysClient.PlaySound(swapIsElytra ? SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value() : SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
+                QuickHotkeysClient.playSound(swapIsElytra ? SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value() : SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
 
                 return true;
             }
@@ -259,7 +253,7 @@ public class KeyInputHandler {
 
         if (swapSlot == -1) {
             if (playError) {
-                QuickHotkeysClient.PlaySound(SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL, 1f);
+                QuickHotkeysClient.playSound(SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL, 1f);
             }
 
             return false;
@@ -267,7 +261,7 @@ public class KeyInputHandler {
 
         attemptToSwapSlot(swapSlot, ARMOUR_SLOT);
 
-        QuickHotkeysClient.PlaySound(swapIsElytra ? SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value() : SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
+        QuickHotkeysClient.playSound(swapIsElytra ? SoundEvents.ITEM_ARMOR_EQUIP_ELYTRA.value() : SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
 
         return true;
     }
@@ -307,14 +301,14 @@ public class KeyInputHandler {
         }
 
         if (swapSlot == -1) {
-            QuickHotkeysClient.PlaySound(SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL, 1f);
+            QuickHotkeysClient.playSound(SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL, 1f);
 
             return;
         }
 
         attemptToSwapSlot(swapSlot, OFFHAND_SLOT1);
 
-        QuickHotkeysClient.PlaySound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
+        QuickHotkeysClient.playSound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), 1f, 1f);
     }
 
     private static void attemptFireworkSwap() {
