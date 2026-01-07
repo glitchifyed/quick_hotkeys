@@ -3,34 +3,33 @@ package net.glitchifyed.quick_hotkeys.mixin;
 import net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient;
 import net.glitchifyed.quick_hotkeys.config.QuickHotkeysConfig;
 import net.glitchifyed.quick_hotkeys.event.KeyInputHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
+import net.minecraft.world.effect.MobEffects;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ClientPlayerEntity.class)
+@Mixin(LocalPlayer.class)
 public class ElytraSwapMixin {
     @Unique boolean lastJump = false;
     @Unique boolean lastGrounded = true;
 
     @Unique boolean airSwapped = false;
 
-    @Inject(method = "tickMovement", at = @At("HEAD"))
+    @Inject(method = "aiStep", at = @At("HEAD"))
     private void swapElytra(CallbackInfo info) {
         if (!QuickHotkeysConfig.autoSwapEnabled) {
             return;
         }
 
-        ClientPlayerEntity player = (ClientPlayerEntity) (Object)this;
+        LocalPlayer player = (LocalPlayer) (Object)this;
 
         // jump/ground check
-        boolean jumping = player.input.playerInput.jump();
-        boolean grounded = player.isOnGround();
+        boolean jumping = player.input.keyPresses.jump();
+        boolean grounded = player.onGround();
 
         boolean groundedChanged = grounded != lastGrounded;
         boolean jumpChanged = jumping != lastJump;
@@ -52,12 +51,12 @@ public class ElytraSwapMixin {
             }
         }
         // check if just jumped + flying disabled + not touching water & not levitating, then make sure the player hasnt already auto swapped, and make sure the swap actually succeeded
-        else if (!groundedChanged && jumpChanged && jumping && !player.getAbilities().allowFlying && !player.isTouchingWater() && !player.hasStatusEffect(StatusEffects.LEVITATION)) {
+        else if (!groundedChanged && jumpChanged && jumping && !player.getAbilities().mayfly && !player.isInWater() && !player.hasEffect(MobEffects.LEVITATION)) {
             if (!airSwapped && KeyInputHandler.attemptElytraSwap(1, false)) {
                 airSwapped = true;
 
-                player.checkGliding();
-                player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
+                player.tryToStartFallFlying();
+                player.connection.send(new ServerboundPlayerCommandPacket(player, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
             }
         }
     }
