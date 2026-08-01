@@ -12,7 +12,7 @@ public class QuickHotkeysCommands {
                 .executes(context -> {
                     // almost used ClientTickEvents.END_CLIENT_TICK to open the screen since it needs to be run on the render thread
                     // then I found this method which is much better
-                    QuickHotkeysClient.CLIENT.execute(() -> QuickHotkeysClient.CLIENT.setScreen(QuickHotkeysConfig.instance().GenerateScreen(QuickHotkeysClient.CLIENT.screen)));
+                    QuickHotkeysClient.CLIENT.execute(() -> QuickHotkeysClient.CLIENT.setScreenAndShow(QuickHotkeysConfig.instance().GenerateScreen(QuickHotkeysClient.CLIENT.gui.screen())));
 
                     return 1;
                 })));
