@@ -22,6 +22,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.lwjgl.glfw.GLFW;
 
+// TODO: rewrite this whole class and split it into separate scripts for easier readability
 public class KeyInputHandler {
     public static final KeyMapping.Category KEY_CATEGORY = new KeyMapping.Category(Identifier.fromNamespaceAndPath("glitchifyed", "quick_hotkeys"));
 
@@ -149,7 +150,8 @@ public class KeyInputHandler {
 
         QuickHotkeysConfig.autoSwapEnabled = enabled;
 
-        CLIENT.gui.hud.getChat().addClientSystemMessage(Component.literal(enabled ? "[Quick Hotkeys] Enabled automatic elytra swapping" : "[Quick Hotkeys] Disabled automatic elytra swapping"));
+        // TODO: make a proper chat message function
+        CLIENT.gui.hud.getChat().addClientSystemMessage(Component.literal(String.format("[Quick Elytra] %s automatic elytra swapping", enabled ? "Enabled" : "Disabled")));
     }
 
     public static boolean attemptElytraSwap(int swapMode, boolean playError) {
