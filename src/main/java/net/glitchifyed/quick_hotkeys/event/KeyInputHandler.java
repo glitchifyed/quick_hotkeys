@@ -2,7 +2,7 @@ package net.glitchifyed.quick_hotkeys.event;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient;
 import net.glitchifyed.quick_hotkeys.config.QuickHotkeysConfig;
 import net.minecraft.client.KeyMapping;
@@ -15,13 +15,14 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.lwjgl.glfw.GLFW;
 
+// TODO: rewrite this whole class and split it into separate scripts for easier readability
 public class KeyInputHandler {
     public static final KeyMapping.Category KEY_CATEGORY = new KeyMapping.Category(Identifier.fromNamespaceAndPath("glitchifyed", "quick_hotkeys"));
 
@@ -54,21 +55,21 @@ public class KeyInputHandler {
     public static void initialiseKeyInputHandler() {
         CLIENT = QuickHotkeysClient.CLIENT;
 
-        equipElytraKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        equipElytraKeyBinding = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 KEY_ELYTRA,
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_G,
                 KEY_CATEGORY
         ));
 
-        equipTotemKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        equipTotemKeyBinding = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 KEY_TOTEM,
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_X,
                 KEY_CATEGORY
         ));
 
-        toggleAutoElytraBinding = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        toggleAutoElytraBinding = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 KEY_AUTO,
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_R,
@@ -85,7 +86,7 @@ public class KeyInputHandler {
             toggleAutoElytra();
         });
 
-        ClientTickEvents.END_WORLD_TICK.register(world -> {
+        ClientTickEvents.END_LEVEL_TICK.register(level -> {
             checkFireworkSwap();
         });
     }
@@ -149,7 +150,8 @@ public class KeyInputHandler {
 
         QuickHotkeysConfig.autoSwapEnabled = enabled;
 
-        CLIENT.gui.getChat().addMessage(Component.literal(enabled ? "[Quick Hotkeys] Enabled automatic elytra swapping" : "[Quick Hotkeys] Disabled automatic elytra swapping"));
+        // TODO: make a proper chat message function
+        CLIENT.gui.hud.getChat().addClientSystemMessage(Component.literal(String.format("[Quick Elytra] %s automatic elytra swapping", enabled ? "Enabled" : "Disabled")));
     }
 
     public static boolean attemptElytraSwap(int swapMode, boolean playError) {
@@ -183,11 +185,11 @@ public class KeyInputHandler {
         if (swapBothWays) {
             ItemStack offhandSlot = PLAYER.getOffhandItem();
             if (doesItemGoInChestplateSlot(offhandSlot) && (wearingNothing || wearingChestplate && isItemElytra(offhandSlot) || wearingElytra)) {
-                CLIENT.gameMode.handleInventoryMouseClick(
+                CLIENT.gameMode.handleContainerInput(
                         PLAYER.inventoryMenu.containerId,
                         ARMOUR_SLOT,
                         OFFHAND_SLOT2,
-                        ClickType.SWAP,
+                        ContainerInput.SWAP,
                         PLAYER
                 );
 
@@ -410,35 +412,35 @@ public class KeyInputHandler {
 
         // if its in the hotbar
         if (slotId < 9) {
-            CLIENT.gameMode.handleInventoryMouseClick(
+            CLIENT.gameMode.handleContainerInput(
                     PLAYER.inventoryMenu.containerId,
                     equippedSlotId,
                     slotId,
-                    ClickType.SWAP,
+                    ContainerInput.SWAP,
                     PLAYER
             );
         } else { // do the hacky workaround because mojang added checks if its not in the hotbar (WHY)
-            CLIENT.gameMode.handleInventoryMouseClick(
+            CLIENT.gameMode.handleContainerInput(
                     PLAYER.inventoryMenu.containerId,
                     slotId,
                     0,
-                    ClickType.PICKUP,
+                    ContainerInput.PICKUP,
                     PLAYER
             );
 
-            CLIENT.gameMode.handleInventoryMouseClick(
+            CLIENT.gameMode.handleContainerInput(
                     PLAYER.inventoryMenu.containerId,
                     equippedSlotId,
                     0,
-                    ClickType.PICKUP,
+                    ContainerInput.PICKUP,
                     PLAYER
             );
 
-            CLIENT.gameMode.handleInventoryMouseClick(
+            CLIENT.gameMode.handleContainerInput(
                     PLAYER.inventoryMenu.containerId,
                     slotId,
                     0,
-                    ClickType.PICKUP,
+                    ContainerInput.PICKUP,
                     PLAYER
             );
         }
