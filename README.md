@@ -16,8 +16,8 @@ It has several different options:
 * Configure a list of valid firework items for the automatic firework swap
 
 **Official download links:**\
-https://modrinth.com/mod/quick_hotkeys \
-https://www.curseforge.com/minecraft/mc-mods/quick-hotkeys
+https://modrinth.com/mod/quickelytra \
+https://www.curseforge.com/minecraft/mc-mods/quickelytra
 
 This mod is a remake of my older mod **Quick Elytra**. If you would like to use this mod for a Minecraft version before 1.20, use Quick Elytra instead.\
 https://modrinth.com/mod/quick-elytra
