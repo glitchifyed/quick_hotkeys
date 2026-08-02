@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "net.glitchifyed.quick_hotkeys.mixin",
+  "package": "net.glitchifyed.quickelytra.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
   ],

@@ -1,0 +1,57 @@
+{
+  "generic.toggles": "Toggles",
+
+
+  "key.category.glitchifyed.quickelytra": "Quick Elytra Reborn",
+
+  "key.glitchifyed.quickelytra.equip_elytra": "Quick swap elytra",
+  "key.glitchifyed.quickelytra.equip_totem": "Quick swap offhand groups",
+
+  "key.glitchifyed.quickelytra.automatic_elytra": "Toggle automatic elytra swapping",
+
+
+  "status.glitchifyed.quickelytra.automatic_elytra": "[%s] Auto elytra swap",
+
+
+
+  "config.glitchifyed.quickelytra.title": "Quick Elytra Reborn Config",
+
+
+  "config.glitchifyed.quickelytra.elytra_swapping.title": "Elytra swapping",
+  "config.glitchifyed.quickelytra.elytra_swapping.desc": "Change how elytra swapping works, mainly concerning automation.",
+
+  "config.glitchifyed.quickelytra.elytra_swapping.automated.title": "Automated swapping",
+  "config.glitchifyed.quickelytra.elytra_swapping.automated.desc": "Attempting to double-jump will trigger the elytra-swap mechanic automatically, just like if you were already wearing them in the first place! This may be considered cheating on some servers.",
+
+  "config.glitchifyed.quickelytra.elytra_swapping.fireworks.title": "Firework auto-swap into offhand",
+  "config.glitchifyed.quickelytra.elytra_swapping.fireworks.desc": "Fireworks will be auto-swapped into your offhand when elytra swap has been activated. They will be switched away upon landing.",
+
+  "config.glitchifyed.quickelytra.elytra_swapping.restock_fireworks.title": "Restock fireworks",
+  "config.glitchifyed.quickelytra.elytra_swapping.restock_fireworks.desc": "Fireworks swapped into your offhand will be automatically restocked from your inventory if you run out. If this option is disabled or you have no fireworks left, your previous offhand item will be swapped back in instead.",
+
+
+  "config.glitchifyed.quickelytra.item_lists.title": "Item lists",
+  "config.glitchifyed.quickelytra.item_lists.desc": "Change which items are used when swapping from the inventory, e.g. items that are considered elytra, etc. Feel free to add stuff like modded elytras or change up your offhand items!",
+
+  "config.glitchifyed.quickelytra.item_lists.elytras.title": "Elytras",
+  "config.glitchifyed.quickelytra.item_lists.elytras.desc": "A list of items which are considered to be elytras. This is especially useful for adding modded elytras.",
+
+  "config.glitchifyed.quickelytra.item_lists.fireworks.title": "Fireworks",
+  "config.glitchifyed.quickelytra.item_lists.fireworks.desc": "This list is used for the firework auto-swap when the elytra-swap has been activated.",
+
+  "config.glitchifyed.quickelytra.item_lists.offhand1.title": "Primary offhand",
+  "config.glitchifyed.quickelytra.item_lists.offhand1.desc": "A list of the primary items you'd like in your offhand. These are used specifically for the quick offhand swap keybind, which upon pressing, will swap a primary item with a secondary item.",
+
+  "config.glitchifyed.quickelytra.item_lists.offhand2.title": "Secondary offhand",
+  "config.glitchifyed.quickelytra.item_lists.offhand2.desc": "A list of the secondary items you'd like in your offhand. These are used specifically for the quick offhand swap keybind, which upon pressing, will swap a secondary item with a primary item.",
+
+
+  "config.glitchifyed.quickelytra.alerts.title": "Mod alerts",
+  "config.glitchifyed.quickelytra.alerts.desc": "Change what kinds of status alerts you get from the mod!",
+
+  "config.glitchifyed.quickelytra.alerts.chat.title": "Chat message alerts",
+  "config.glitchifyed.quickelytra.alerts.chat.desc": "Usually the mod would have a few chat message alerts, such as when you enable/disable auto-swapping via the keybind. This disables things like that.",
+
+  "config.glitchifyed.quickelytra.alerts.sounds.title": "Sound alerts",
+  "config.glitchifyed.quickelytra.alerts.sounds.desc": "Controls whether sound alerts are used, such as when one of your keybinds has failed to work."
+}

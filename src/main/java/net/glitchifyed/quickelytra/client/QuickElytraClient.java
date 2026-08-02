@@ -1,7 +1,7 @@
-package net.glitchifyed.quick_hotkeys.client;
+package net.glitchifyed.quickelytra.client;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.glitchifyed.quick_hotkeys.event.KeyInputHandler;
+import net.glitchifyed.quickelytra.event.KeyInputHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
@@ -9,14 +9,14 @@ import net.minecraft.sounds.SoundEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QuickHotkeysClient implements ClientModInitializer {
-    public static final String MODID = "quick_hotkeys";
+public class QuickElytraClient implements ClientModInitializer {
+    public static final String MODID = "quickelytra";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static Minecraft CLIENT;
 
     @Override
     public void onInitializeClient() {
-        LOGGER.info("Currently loading Quick Hotkeys");
+        LOGGER.info("Currently loading Quick Elytra");
 
         CLIENT = Minecraft.getInstance();
         LOGGER.info("Got the client");
@@ -24,7 +24,7 @@ public class QuickHotkeysClient implements ClientModInitializer {
         KeyInputHandler.initialiseKeyInputHandler();
         LOGGER.info("Registered keybinds");
 
-        LOGGER.info("Quick Hotkeys has been fully loaded");
+        LOGGER.info("Quick Elytra has been fully loaded");
     }
 
     public static void playSound(SoundEvent soundEvent, float pitch, float volume) {

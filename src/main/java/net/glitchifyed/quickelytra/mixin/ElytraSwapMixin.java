@@ -1,8 +1,8 @@
-package net.glitchifyed.quick_hotkeys.mixin;
+package net.glitchifyed.quickelytra.mixin;
 
-import net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient;
-import net.glitchifyed.quick_hotkeys.config.QuickHotkeysConfig;
-import net.glitchifyed.quick_hotkeys.event.KeyInputHandler;
+import net.glitchifyed.quickelytra.config.QuickElytraConfig;
+import net.glitchifyed.quickelytra.enums.ElytraSwapMode;
+import net.glitchifyed.quickelytra.event.KeyInputHandler;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.world.effect.MobEffects;
@@ -21,7 +21,7 @@ public class ElytraSwapMixin {
 
     @Inject(method = "aiStep", at = @At("HEAD"))
     private void swapElytra(CallbackInfo info) {
-        if (!QuickHotkeysConfig.autoSwapEnabled) {
+        if (!QuickElytraConfig.autoSwapEnabled) {
             return;
         }
 
@@ -47,12 +47,12 @@ public class ElytraSwapMixin {
             if (groundedChanged && airSwapped) {
                 airSwapped = false;
 
-                KeyInputHandler.attemptElytraSwap(2, false);
+                KeyInputHandler.attemptElytraSwap(ElytraSwapMode.ONLY_CHESTPLATE, false);
             }
         }
         // check if just jumped + flying disabled + not touching water & not levitating, then make sure the player hasnt already auto swapped, and make sure the swap actually succeeded
         else if (!groundedChanged && jumpChanged && jumping && !player.getAbilities().mayfly && !player.isInWater() && !player.hasEffect(MobEffects.LEVITATION)) {
-            if (!airSwapped && KeyInputHandler.attemptElytraSwap(1, false)) {
+            if (!airSwapped && KeyInputHandler.attemptElytraSwap(ElytraSwapMode.ONLY_ELYTRA, false)) {
                 airSwapped = true;
 
                 player.tryToStartFallFlying();
