@@ -1,18 +1,18 @@
-package net.glitchifyed.quick_hotkeys.command;
+package net.glitchifyed.quickelytra.command;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.glitchifyed.quick_hotkeys.client.QuickHotkeysClient;
-import net.glitchifyed.quick_hotkeys.config.QuickHotkeysConfig;
+import net.glitchifyed.quickelytra.client.QuickElytraClient;
+import net.glitchifyed.quickelytra.config.QuickElytraConfig;
 
 import static net.minecraft.commands.Commands.*;
 
-public class QuickHotkeysCommands {
+public class QuickElytraCommands {
     public static void registerCommands() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("quickelytra")
                 .executes(context -> {
                     // almost used ClientTickEvents.END_CLIENT_TICK to open the screen since it needs to be run on the render thread
                     // then I found this method which is much better
-                    QuickHotkeysClient.CLIENT.execute(() -> QuickHotkeysClient.CLIENT.setScreenAndShow(QuickHotkeysConfig.instance().GenerateScreen(QuickHotkeysClient.CLIENT.gui.screen())));
+                    QuickElytraClient.CLIENT.execute(() -> QuickElytraClient.CLIENT.setScreenAndShow(QuickElytraConfig.instance().GenerateScreen(QuickElytraClient.CLIENT.gui.screen())));
 
                     return 1;
                 })));
